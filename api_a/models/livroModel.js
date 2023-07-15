@@ -21,8 +21,12 @@ const livroSchema = new mongoose.Schema({
   Tema: {
     type: String,
     required: true
+  },
+  Alugado: {
+    type: Boolean,
+    required: false
   }
 });
 
 
-module.exports =  mongoose.model('Livro', livroSchema);
+module.exports = mongoose.model('Livro', livroSchema);

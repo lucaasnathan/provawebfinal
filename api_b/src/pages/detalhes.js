@@ -1,51 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Title from './../components/Title/index';
-import Comments from './../components/Comments/index';
 
-const filmes = [{
-    "nome": "Vingadores",
-    "genero": "Ação/Nerd",
-    "descricao": "Filme da Marvel com super-heróis",
-    "nota": 5
-},
-{
-    "nome": "Vingadores 2",
-    "genero": "Ação/Nerd",
-    "descricao": "Filme da Marvel com super-heróis",
-    "nota": 5
-},
-{
-    "nome": "Vingadores 3",
-    "genero": "Ação/Nerd",
-    "descricao": "Filme da Marvel com super-heróis",
-    "nota": 5
-}
-]
+const DetalhesLivro = () => {
+    const { ISBN } = useParams();
+    const [livro, setLivro] = useState(null);
+    const [alugado, setAlugado] = useState(false);
 
+    useEffect(() => {
+        const carregarLivro = async () => {
+            const response = await fetch(`http://localhost:3001/livro/${ISBN}`);
+            const data = await response.json();
+            setLivro(data);
+        };
 
-function Detalhes() {
-    const { filme } = useParams();
+        carregarLivro();
+    }, [ISBN]);
 
-    const filmeEscolhido = filmes.filter(f =>
-        f.nome === filme
-    );
+    const handleAlugar = () => {
+        if (alugado) {
+            alert('Livro indisponível para aluguel.');
+        } else {
+            setAlugado(true);
+            alert('Livro alugado com sucesso!');
+        }
+    };
+
+    if (!livro) {
+        return <div>Carregando...</div>;
+    }
 
     return (
-        <div>
-            <Title
-                title={"Detalhes"}
-                text="" />
-            <div className="container text-center">
-                <p>Filme: {filmeEscolhido[0].nome}</p>
-                <div>
-                    <p>{filmeEscolhido[0].descricao}</p>
-                    <p>{filmeEscolhido[0].genero}</p>
-                </div>
-                <Comments filme={filmeEscolhido[0].nome} />
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+            <div>
+                <h2>{livro.Titulo}</h2>
+                <p>Autor: {livro.Autor}</p>
+                <p>Ano de Publicação: {livro.AnoPublicacao}</p>
+                <p>Tema: {livro.Tema}</p>
+                {alugado ? (
+                    <button disabled>Indisponível</button>
+                ) : (
+                    <button onClick={handleAlugar}>Alugar</button>
+                )}
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Detalhes;
+export default DetalhesLivro;
